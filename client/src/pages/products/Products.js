@@ -22,9 +22,10 @@ function Products() {
   }
 
   return (
-    <div className="w-9/12 bg-white">
-      <Link to="/add" className="bg-custom-skyblue text-white px-4 py-[6px] mb-10 ms-10">+ Add Product</Link>
-      <table className="w-full">
+    <div className="bg-custom-grey1 h-screen flex items-center">
+      <div className="w-9/12 mx-auto ">
+      <Link to="/add" className="bg-custom-skyblue text-white px-4 py-[6px] rounded-md">+ Add Product</Link>
+      <table className="w-full mx-auto bg-white mt-3">
         <thead>
           <tr>
             <th className="w-[5%]">#</th>
@@ -43,14 +44,15 @@ function Products() {
                 <td className="text-center">{data.stock}</td>
                 <td className="text-center">{data.price}</td>
                 <td className="text-center">
-                  <Link to={`update/${data.id}`} className="bg-custom-green text-white px-5 py-[10px] me-3">Update</Link>
-                  <button className="bg-custom-red text-white px-5 py-[10px]" onClick={ e => handleDelete(data.id)}>Delete</button>
+                  <Link to={`update/${data.id}`} className="bg-custom-green text-white px-5 py-[10px] me-3 rounded-md">Update</Link>
+                  <button className="bg-custom-red text-white px-5 py-[7.6px] rounded-md" onClick={ e => handleDelete(data.id)}>Delete</button>
                 </td>
               </tr>
             ))
           }
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

@@ -19,10 +19,10 @@ function AddProduct() {
     }
 
     return (
-      <div className="container mx-auto px-4 py-80 flex justify-center">
-        <div className="bg-white p-4 rounded-md shadow-md w-2/5"> 
+      <div className="bg-custom-grey1 h-screen w-screen flex justify-center items-center">
+        <div className="bg-white p-4 h-2/4 rounded-md shadow-md w-2/5 flex justify-center items-center flex-col px-10"> 
           <h1 className="text-3xl font-['Open_Sans'] font-bold">Add New Product</h1>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="w-full">
             <div className="mb-5">
               <label>Product Name:</label>
               <input type="text" className="mt-1 p-2 w-full border border-gray-300" 
