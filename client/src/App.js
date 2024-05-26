@@ -7,7 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 /* User Pages */
 import Products from './pages/products/Products';
-
+import AddProduct from './pages/products/AddProduct';
+import UpdateProduct from './pages/products/UpdateProduct';
 
 
 function App() {
@@ -19,6 +20,8 @@ function App() {
 
         {/* User Page Routes */}
         <Route path="/" element={<Products />} />
+        <Route path="/add" element={<AddProduct/>} />
+        <Route path="/update/:id" element={<UpdateProduct/>} />
       </Routes>
     </BrowserRouter>
   );
