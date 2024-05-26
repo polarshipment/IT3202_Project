@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 26, 2024 at 01:12 AM
+-- Generation Time: May 26, 2024 at 12:38 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -41,7 +41,8 @@ CREATE TABLE `products` (
 INSERT INTO `products` (`id`, `product_name`, `stock`, `price`) VALUES
 (1, 'Ice candy', 20, 10.00),
 (2, 'Laundry detergent', 5, 7.00),
-(3, 'Pancit Canton', 7, 13.00);
+(3, 'Pancit Canton', 7, 13.00),
+(4, 'Oreo', 10, 9.00);
 
 -- --------------------------------------------------------
 
@@ -51,7 +52,8 @@ INSERT INTO `products` (`id`, `product_name`, `stock`, `price`) VALUES
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
-  `username` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -79,7 +81,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user`
