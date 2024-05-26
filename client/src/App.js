@@ -2,13 +2,15 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 /* General Pages */
-// import Login from "./pages/login/login";
+import Login from "./pages/login/Login";
 // register page if mada
 
 /* User Pages */
+import Layout from './components/layout/layout';
 import Products from './pages/products/Products';
 import AddProduct from './pages/products/AddProduct';
 import UpdateProduct from './pages/products/UpdateProduct';
+import Dashboard from './pages/dashboard/Dashboard'
 
 
 function App() {
@@ -16,12 +18,15 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* General Page Routes*/}
-        {/* <Route path="/" element={<Login />} /> */}
+        <Route path="/" element={<Login />} />
 
         {/* User Page Routes */}
-        <Route path="/" element={<Products />} />
-        <Route path="/add" element={<AddProduct/>} />
-        <Route path="/update/:id" element={<UpdateProduct/>} />
+        <Route path="user" element={<Layout />}>
+          <Route index element={<Dashboard />} />                           {/* localhost/user */}
+          <Route path="products" element={<Products />} />                  {/* localhost/user/products */}
+          <Route path="products/add" element={<AddProduct />} />            {/* localhost/user/products/add*/}
+          <Route path="products/update/:id" element={<UpdateProduct />} />  {/* localhost/user/products/update/1*/}
+        </Route>
       </Routes>
     </BrowserRouter>
   );
