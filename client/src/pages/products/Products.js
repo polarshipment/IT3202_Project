@@ -24,7 +24,7 @@ function Products() {
   return (
     <div className="bg-custom-grey1 h-screen flex items-center">
       <div className="w-9/12 mx-auto ">
-      <Link to="/add" className="bg-custom-skyblue text-white px-4 py-[6px] rounded-md">+ Add Product</Link>
+      <Link to="/user/products/add" className="bg-custom-skyblue text-white px-4 py-[6px] rounded-md">+ Add Product</Link>
       <table className="w-full mx-auto bg-white mt-3">
         <thead>
           <tr>
