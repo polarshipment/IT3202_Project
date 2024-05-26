@@ -21,9 +21,9 @@ function UpdateProduct() {
     }
 
     return (
-      <div className="container mx-auto px-4 py-80 flex justify-center">
+      <div className="bg-custom-grey1 h-screen w-screen flex justify-center items-center">
         <div className="bg-white p-4 rounded-md shadow-md w-2/5"> 
-          <h1 className="text-3xl font-['Open_Sans'] font-bold">Update Product</h1>
+          <h1 className="text-3xl font-['Open_Sans'] font-bold text-center">Update Product</h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-5">
               <label>Product Name:</label>
