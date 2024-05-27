@@ -9,9 +9,10 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 })
 
+// Check if connection is successful
 db.connect( (error) => {
     if(error) {
-        console.log('Error:', error)
+        console.log('Database connection failed. Error:', error.sqlMessage)
     } else {
         console.log('Successfully connected to the database')
     }
