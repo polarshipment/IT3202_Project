@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
+
 function UpdateProduct() {
     const [product_name, setProductName] = useState('')
     const [stock, setStock] = useState('')
@@ -15,9 +16,13 @@ function UpdateProduct() {
       event.preventDefault();
       axios.put('http://localhost:7000/update/'+ id, {product_name, stock, price}) 
       .then(res => {
-        console.log(res);
+        console.log('Product Successfully Updated:', res.data);
+        alert('Product Updated Successfully!');
         navigate('/');
-      }).catch(err => console.log(err));
+      }).catch(err =>{
+        console.error('Error Updating Product:', err);
+        alert('An error occurred. Please try again.');
+      }); 
     }
 
     function handleCancel() {
