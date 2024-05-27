@@ -2,8 +2,8 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 /* General Pages */
-import Login from "./pages/login/Login";
-// register page if mada
+import Login from './pages/login/Login';
+import Register from './pages/register/Register';
 
 /* User Pages */
 import Layout from './components/layout/layout';
@@ -19,6 +19,7 @@ function App() {
       <Routes>
         {/* General Page Routes*/}
         <Route path="/" element={<Login />} />
+        <Route path="register" element={<Register />} />
 
         {/* User Page Routes */}
         <Route path="user" element={<Layout />}>
