@@ -7,7 +7,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const PORT = process.env.PORT || 7000;
 
+
+// CRUD
 app.get("/", (req, res) => {
     // res.json("Hello");
     const sql = "SELECT * FROM products";
@@ -56,23 +59,37 @@ app.delete("/products/:id", (req, res) => {
     })
 })
 
-app.listen(7000, () => {
-    console.log("listening");
+app.put("/", (req, res) => {
+    if (req.method === 'PUT') {
+        const updateData = req.body;
+        if (!updateData.id || !updateData.stock) {
+            return res.status(400).json({ message: "Missing required data (id or stock)" });
+        }
+
+        const sql = "UPDATE products SET stock = ? WHERE id = ?";
+        const values = [updateData.stock, updateData.id];
+
+        db.query(sql, values, (err, data) => {
+            return res.json({ message: "Product stock updated successfully" });
+        });
+    }
 })
 
-app.put("/", (req, res) => {
-  if (req.method === 'PUT') {
-    const updateData = req.body;
-    if (!updateData.id || !updateData.stock) {
-      return res.status(400).json({ message: "Missing required data (id or stock)" });
-    }
 
-    const sql = "UPDATE products SET stock = ? WHERE id = ?";
-    const values = [updateData.stock, updateData.id];
+// AUTHENTICATION
+app.post("/login", (req, res) => {
+    const sql = "SELECT * FROM user WHERE email = ? AND password = ?";
+    
+    db.query(sql, [req.body.email, req.body.pass], (err, data) => {
+        if(err) return res.json("Error: ", err.sqlMessage);
+        if(data.length > 0 ) {
+            return res.json("Login Successful.");
+        } else{
+            return res.json("No matching record.");
+        }
+    })
+})
 
-    db.query(sql, values, (err, data) => {
-
-      return res.json({ message: "Product stock updated successfully" });
-    });
-  }
+app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
 })
