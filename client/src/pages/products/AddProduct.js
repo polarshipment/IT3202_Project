@@ -18,6 +18,10 @@ function AddProduct() {
       }).catch(err => console.log(err));
     }
 
+    function handleCancel() {
+      navigate('/');
+    }
+
     return (
       <div className="h-full w-full flex justify-center items-center">
         <div className="bg-white min-w-[35%] py-10 px-20 rounded-md shadow-md"> 
@@ -42,6 +46,7 @@ function AddProduct() {
               />
             </div>
             <div style={{ textAlign: 'center' }}>
+            <button className="bg-custom-red text-white px-10 py-2 rounded-md mr-2" onClick={handleCancel} >CANCEL</button>
             <button className="bg-custom-skyblue text-white px-10 py-2 rounded-md">CREATE</button>
             </div>
           </form>
