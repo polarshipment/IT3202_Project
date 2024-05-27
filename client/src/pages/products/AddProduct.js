@@ -38,13 +38,15 @@ function AddProduct() {
               <label className="">Stock Available:</label>
               <input type="number" className="mt-1 p-2 w-full border-2 border-gray-300" 
               onChange={e => setStock(Math.max(0, e.target.value))}
+              min="0"
               required
               />
             </div>
             <div className="mb-5">
               <label className="">Price:</label>
               <input type="number" step="0.01" className="mt-1 p-2 w-full border-2 border-gray-300" 
-                onChange={e => setPrice(parseFloat(e.target.value))} 
+                onChange={e => setPrice(Math.max(0, parseFloat(e.target.value)))} 
+                min="0" 
                 required
                 />
             </div>
