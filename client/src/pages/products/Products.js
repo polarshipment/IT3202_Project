@@ -22,36 +22,38 @@ function Products() {
   }
 
   return (
-    <div className="bg-custom-grey1 h-screen flex items-center">
-      <div className="w-9/12 mx-auto ">
-      <Link to="/user/products/add" className="bg-custom-skyblue text-white px-4 py-[6px] rounded-md">+ Add Product</Link>
-      <table className="w-full mx-auto bg-white mt-3">
-        <thead>
-          <tr>
-            <th className="w-[5%]">#</th>
-            <th>Name</th>
-            <th className="w-[15%]">Stock Available</th>
-            <th className="w-1/5">Price</th>
-            <th className="w-[23%]">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            products.map((data, i) => (
-              <tr key={i}>
-                <td className="text-center">{data.id}</td>
-                <td>{data.product_name}</td>
-                <td className="text-center">{data.stock}</td>
-                <td className="text-center">{data.price}</td>
-                <td className="text-center">
-                  <Link to={`update/${data.id}`} className="bg-custom-green text-white px-5 py-[10px] me-3 rounded-md">Update</Link>
-                  <button className="bg-custom-red text-white px-5 py-[7.6px] rounded-md" onClick={ e => handleDelete(data.id)}>Delete</button>
-                </td>
+    <div className="h-full pt-14">
+      <div className="w-9/12 mx-auto">
+        <Link to="/user/products/add" className="bg-custom-skyblue text-white px-6 py-[11px] rounded-md hover:bg-[#0EC2E7]">+ Add Product</Link>
+        <div className="w-full overflow-x-auto">
+          <table className="w-full bg-white my-6">
+            <thead>
+              <tr>
+                <th className="w-[5%]">#</th>
+                <th>Name</th>
+                <th className="w-[15%]">Stock Available</th>
+                <th className="w-1/5">Price</th>
+                <th className="w-[23%]">Actions</th>
               </tr>
-            ))
-          }
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {
+                products.map((data, i) => (
+                  <tr key={i}>
+                    <td className="text-center">{data.id}</td>
+                    <td>{data.product_name}</td>
+                    <td className="text-center">{data.stock}</td>
+                    <td className="text-center">{data.price}</td>
+                    <td className="text-center">
+                      <Link to={`update/${data.id}`} className="bg-custom-green text-white px-5 py-[10px] me-3 rounded-md">Update</Link>
+                      <button className="bg-custom-red text-white px-5 py-[7.6px] rounded-md" onClick={ e => handleDelete(data.id)}>Delete</button>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
