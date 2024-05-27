@@ -8,7 +8,7 @@ function Navbar() {
       <div className="flex items-center font-['Barlow_Semi_Condensed'] text-xl">
         <Link to="/user"  className="cursor-pointer ms-8 hover:text-gray-500">DASHBOARD</Link>
         <Link to='/user/products' className="cursor-pointer ms-8 hover:text-gray-500">PRODUCTS</Link>
-        <Link to='#' className="cursor-pointer border border-black px-4 py-1 ms-8 hover:bg-custom-grey1">LOGOUT</Link>
+        <Link to='/' className="cursor-pointer border border-black px-4 py-1 ms-8 hover:bg-custom-grey1">LOGOUT</Link>
       </div>
     </nav>
   )
