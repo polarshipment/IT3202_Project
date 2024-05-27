@@ -59,3 +59,20 @@ app.delete("/products/:id", (req, res) => {
 app.listen(7000, () => {
     console.log("listening");
 })
+
+app.put("/", (req, res) => {
+  if (req.method === 'PUT') {
+    const updateData = req.body;
+    if (!updateData.id || !updateData.stock) {
+      return res.status(400).json({ message: "Missing required data (id or stock)" });
+    }
+
+    const sql = "UPDATE products SET stock = ? WHERE id = ?";
+    const values = [updateData.stock, updateData.id];
+
+    db.query(sql, values, (err, data) => {
+
+      return res.json({ message: "Product stock updated successfully" });
+    });
+  }
+})
