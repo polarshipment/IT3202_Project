@@ -43,9 +43,9 @@ function UpdateProduct() {
             </div>
             <div className="mb-5">
               <label className="">Price:</label>
-              <input type="text" className="mt-1 p-2 w-full border-2 border-gray-300" 
-            onChange={ e => setPrice(e.target.value)}
-              />
+              <input type="number" step="0.01" className="mt-1 p-2 w-full border-2 border-gray-300" 
+                onChange={e => setPrice(parseFloat(e.target.value))} 
+                />
             </div>
             <div style={{ textAlign: 'center' }}>
             <button className="bg-custom-red text-white px-10 py-2 rounded-md mr-2" onClick={handleCancel} >CANCEL</button>
