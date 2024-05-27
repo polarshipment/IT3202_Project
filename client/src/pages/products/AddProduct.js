@@ -31,18 +31,21 @@ function AddProduct() {
               <label>Product Name:</label>
               <input type="text" className="mt-1 p-2 w-full border-2 border-gray-300" 
               onChange={ e => setProductName(e.target.value)}
+              required
               />
             </div>
             <div className="mb-5">
               <label className="">Stock Available:</label>
               <input type="number" className="mt-1 p-2 w-full border-2 border-gray-300" 
-              onChange={ e => setStock(e.target.value)}
+              onChange={e => setStock(Math.max(0, e.target.value))}
+              required
               />
             </div>
             <div className="mb-5">
               <label className="">Price:</label>
               <input type="number" step="0.01" className="mt-1 p-2 w-full border-2 border-gray-300" 
                 onChange={e => setPrice(parseFloat(e.target.value))} 
+                required
                 />
             </div>
             <div style={{ textAlign: 'center' }}>
