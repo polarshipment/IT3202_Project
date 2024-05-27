@@ -13,9 +13,13 @@ function AddProduct() {
       event.preventDefault();
       axios.post('http://localhost:7000/add', {product_name, stock, price}) 
       .then(res => {
-        console.log(res);
+        console.log('Product Successfully Added:', res.data);
+        alert('Product Added Successfully!');
         navigate('/');
-      }).catch(err => console.log(err));
+      }).catch(err =>{
+        console.error('Error adding product:', err);
+        alert('An error occurred. Please try again.');
+      }); 
     }
 
     function handleCancel() {
