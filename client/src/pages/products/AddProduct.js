@@ -19,30 +19,30 @@ function AddProduct() {
     }
 
     return (
-      <div className="bg-custom-grey1 h-screen w-screen flex justify-center items-center">
-        <div className="bg-white p-4 h-2/4 rounded-md shadow-md w-2/5 flex justify-center items-center flex-col px-10"> 
-          <h1 className="text-3xl font-['Open_Sans'] font-bold">Add New Product</h1>
-          <form onSubmit={handleSubmit} className="w-full">
+      <div className="h-full w-full flex justify-center items-center">
+        <div className="bg-white min-w-[35%] py-10 px-20 rounded-md shadow-md"> 
+          <h1 className="text-4xl font-['Open_Sans'] font-bold text-center mb-10">Add New Product</h1>
+          <form onSubmit={handleSubmit}>
             <div className="mb-5">
               <label>Product Name:</label>
-              <input type="text" className="mt-1 p-2 w-full border border-gray-300" 
+              <input type="text" className="mt-1 p-2 w-full border-2 border-gray-300" 
               onChange={ e => setProductName(e.target.value)}
               />
             </div>
             <div className="mb-5">
               <label className="">Stock Available:</label>
-              <input type="number" className="mt-1 p-2 w-full border border-gray-300" 
+              <input type="number" className="mt-1 p-2 w-full border-2 border-gray-300" 
               onChange={ e => setStock(e.target.value)}
               />
             </div>
             <div className="mb-5">
               <label className="">Price:</label>
-              <input type="number" className="mt-1 p-2 w-full border border-gray-300" 
+              <input type="number" className="mt-1 p-2 w-full border-2 border-gray-300" 
             onChange={ e => setPrice(e.target.value)}
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-            <button className="bg-custom-skyblue text-white px-2 py-2 w-32 rounded-md">Create</button>
+            <button className="bg-custom-skyblue text-white px-10 py-2 rounded-md">CREATE</button>
             </div>
           </form>
         </div>

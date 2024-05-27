@@ -4,7 +4,7 @@ import Navbar from '../navbar/navbar';
 
 function Layout() {
   return (
-    <div className="h-screen flex flex-col bg-custom-grey1">
+    <div className="h-screen flex flex-col">
       <Navbar />
       <div className="w-full h-full">
         <Outlet />
