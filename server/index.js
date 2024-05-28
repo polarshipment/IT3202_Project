@@ -3,18 +3,19 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const db = require('./db/dbConfig.js');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
 const PORT = process.env.PORT || 7000;
 
 
 // CRUD
 app.get("/", (req, res) => {
-    // res.json("Hello");
     const sql = "SELECT * FROM products";
     db.query(sql, (err, data) => {
         if(err) return res.json("Error");
@@ -111,6 +112,12 @@ app.post("/register", (req, res) => {
     })
 })
 
+const generateTokens = (id) => {
+    const accessToken = jwt.sign({id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+    const refreshToken = jwt.sign({id}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+    return { accessToken, refreshToken };
+};
+
 app.post("/login", (req, res) => {
 
     const sql = "SELECT * FROM users WHERE email = ?";
@@ -123,8 +130,9 @@ app.post("/login", (req, res) => {
                 if(err) return res.json("Error: ", err.message);
                 if(response) {
                     const id = data[0].id;
-                    const accessToken = jwt.sign({id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
-                    return res.json({ status: 200, message: "Success", accessToken, data});
+                    const { accessToken, refreshToken } = generateTokens(id);
+                    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Strict' });
+                    return res.json({ status: 200, message: "Success", accessToken, user: { id: data[0].id, name: data[0].name, email: data[0].email }});
                 }
                 return res.json({ status: 401, message: "Invalid credentials." });
             })
@@ -134,24 +142,24 @@ app.post("/login", (req, res) => {
     })
 })
 
-const verifyJwt = (req, res, next) => {
-    const token = req.headers["access-token"];
-    if(!token) {
-        return res.json("we need token");
-    } else {
-        jwt.verify(token, "jwtSecretKey", (err, decoded) => {
-            if(err) res.json("Not Authenticated");
-            else {
-                req.id = decoded.id;
-                next();
-            }
-        })
+app.post("/refreshToken", (req, res) => {
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) {
+        return res.status(401).json({ message: "Refresh Token is required." });
     }
-}
-
-app.get('/checkAuth', verifyJwt, (req, res) => {
-    res.json("Authenticated");
+    try {
+        const userData = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const { accessToken } = generateTokens(userData.id);
+        res.json({ accessToken });
+    } catch (error) {
+        res.status(403).json({ message: "Invalid or expired refresh token", error: error.message });
+    }
 })
+
+app.post("/logout", (req, res) => {
+    res.cookie('refreshToken', '', { httpOnly: true, maxAge: 0, sameSite: 'Strict' });
+    res.status(204).send();
+});
 
 
 

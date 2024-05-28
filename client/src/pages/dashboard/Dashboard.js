@@ -2,6 +2,9 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 function Dashboard() {
+  const userDetails = localStorage.getItem("user");
+  const user = userDetails ? JSON.parse(userDetails) : null;
+
   const [products, setProducts] = useState([]); 
   const [selectedProductId, setSelectedProductId] = useState(null); 
   const [quantity, setQuantity] = useState(0); 
@@ -78,23 +81,12 @@ function Dashboard() {
     }
   };
 
-  const handleAuth = () => {
-    axios.get('http://localhost:7000/checkAuth', {
-      headers: {
-        'access-token' : localStorage.getItem("token")
-      }
-    })
-    .then(res => console.log(res))
-    .catch(err => console.log(err));
-  }
-
 
   return (
     <div className='h-full w-full py-10 flex justify-center'>
       <div className="w-8/12 h-full bg-white p-5 flex flex-col">
-        <button onClick={handleAuth} className='bg-custom-green w-20'>Auth</button>
         <div className="border-b-[1px] border-custom-grey2 py-1 pb-5">
-          Welcome Test!
+        Welcome {user ? user.name : "Guest"}!
         </div>
         <div className="h-full w-full flex justify-center items-center">
           <form onSubmit={handleSubmit}>

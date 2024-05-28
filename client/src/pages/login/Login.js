@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Validation from './LoginValidation';
+import axiosInstance from '../../util/axiosInstance';
 
 function Login() {
   const[formData, setFormData] = useState({
@@ -20,10 +20,11 @@ function Login() {
     e.preventDefault();
     setErrors(Validation(formData));
     if(errors.email === "" && errors.pass === "") {
-      axios.post('http://localhost:7000/login', formData)
+      axiosInstance.post('http://localhost:7000/login', formData)
       .then(res => {
         if(res.data.status === 200){
-          localStorage.setItem("token", res.data.accessToken);
+          localStorage.setItem("accessToken", res.data.accessToken);
+          localStorage.setItem("user", JSON.stringify(res.data.user));
           navigate('/user');
         } else {
           alert(res.data.message);
