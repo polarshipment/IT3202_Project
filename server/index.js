@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const db = require('./db/dbConfig.js');
 
 const app = express();
@@ -121,14 +122,35 @@ app.post("/login", (req, res) => {
             bcrypt.compare(pass, data[0].password, (err, response) => {
                 if(err) return res.json("Error: ", err.message);
                 if(response) {
-                    return res.json({ status: 200, message: "Success" });
+                    const id = data[0].id;
+                    const accessToken = jwt.sign({id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+                    return res.json({ status: 200, message: "Success", accessToken, data});
                 }
-                return res.json({ status: 400, message: "Invalid credentials." });
+                return res.json({ status: 401, message: "Invalid credentials." });
             })
         } else {
-            return res.json({ status: 400, message: "Invalid credentials." });
+            return res.json({ status: 401, message: "Invalid credentials." });
         }
     })
+})
+
+const verifyJwt = (req, res, next) => {
+    const token = req.headers["access-token"];
+    if(!token) {
+        return res.json("we need token");
+    } else {
+        jwt.verify(token, "jwtSecretKey", (err, decoded) => {
+            if(err) res.json("Not Authenticated");
+            else {
+                req.id = decoded.id;
+                next();
+            }
+        })
+    }
+}
+
+app.get('/checkAuth', verifyJwt, (req, res) => {
+    res.json("Authenticated");
 })
 
 
