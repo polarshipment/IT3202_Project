@@ -35,7 +35,7 @@ app.post("/add", (req, res) => {
 
 
 app.put("/update/:id", (req, res) => {
-    const sql = "update products set product_name = ?, stock = ?, price = ? where id = ?";
+    const sql = "UPDATE products SET product_name = ?, stock = ?, price = ? WHERE id = ?";
     const values = [
         req.body.product_name, 
         req.body.stock, 
@@ -59,6 +59,8 @@ app.delete("/products/:id", (req, res) => {
     })
 })
 
+
+// DASHBOARD
 app.put("/", (req, res) => {
     if (req.method === 'PUT') {
         const updateData = req.body;
@@ -77,18 +79,42 @@ app.put("/", (req, res) => {
 
 
 // AUTHENTICATION
-app.post("/login", (req, res) => {
-    const sql = "SELECT * FROM user WHERE email = ? AND password = ?";
-    
-    db.query(sql, [req.body.email, req.body.pass], (err, data) => {
+app.post("/register", (req, res) => {
+
+    const checkUserSql = "SELECT * FROM users WHERE email = ?";
+    db.query(checkUserSql, [req.body.email], (err, data) => {
         if(err) return res.json("Error: ", err.sqlMessage);
         if(data.length > 0 ) {
-            return res.json("Login Successful.");
-        } else{
-            return res.json("No matching record.");
+            return res.json({ status: 400, message: "Email already exist." });
+        }
+
+        const insertUserSql = "INSERT INTO users (`name`,`email`,`password`) VALUES (?)";
+        const values = [
+            req.body.name, 
+            req.body.email, 
+            req.body.pass
+        ]
+        db.query(insertUserSql, [values], (err, data) => {
+            if(err) return res.json("Error: ", err.sqlMessage);
+            return res.json({ status: 200, message: "Account created successfully." });
+        })
+    })
+})
+
+app.post("/login", (req, res) => {
+
+    const checkUserSql = "SELECT * FROM users WHERE email = ? AND password = ?";
+    db.query(checkUserSql, [req.body.email, req.body.pass], (err, data) => {
+        if(err) return res.json("Error: ", err.sqlMessage);
+        if(data.length > 0 ) {
+            return res.json({ status: 200, message: "Success" });
+        } else {
+            return res.json({ status: 400, message: "Invalid credentials." });
         }
     })
 })
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
