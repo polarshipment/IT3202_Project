@@ -35,7 +35,7 @@ app.post("/add", (req, res) => {
 
 
 app.put("/update/:id", (req, res) => {
-    const sql = "update products set product_name = ?, stock = ?, price = ? where id = ?";
+    const sql = "UPDATE products SET product_name = ?, stock = ?, price = ? WHERE id = ?";
     const values = [
         req.body.product_name, 
         req.body.stock, 
