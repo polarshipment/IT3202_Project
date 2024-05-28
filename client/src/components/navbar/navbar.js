@@ -11,9 +11,7 @@ function Navbar() {
 
   const handleLogout = async () => {
     try {
-      // Make API call to backend to invalidate the session using the custom Axios instance
       await axios.post("/logout");
-      // Clear local storage of the accessToken
       localStorage.removeItem("accessToken");
       navigate("/");
     } catch (error) {

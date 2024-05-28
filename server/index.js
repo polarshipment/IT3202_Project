@@ -16,7 +16,6 @@ const PORT = process.env.PORT || 7000;
 
 // CRUD
 app.get("/", (req, res) => {
-    // res.json("Hello");
     const sql = "SELECT * FROM products";
     db.query(sql, (err, data) => {
         if(err) return res.json("Error");
