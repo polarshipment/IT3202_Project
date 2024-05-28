@@ -5,5 +5,5 @@
 
 3. LOG IN CREDENTIALS:
 	User:
-	   username: (TBD)
-	   password: (TBD)
+	   username: test@gmail.com
+	   password: testtest
