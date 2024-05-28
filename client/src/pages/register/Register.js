@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Validation from './RegisterValidation';
 
 function Register() {
@@ -10,6 +11,7 @@ function Register() {
     pass: ''
   })
 
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -19,6 +21,19 @@ function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors(Validation(formData));
+    if(errors.name === "" && errors.email === "" && errors.pass === "") {
+      axios.post('http://localhost:7000/register', formData)
+      .then(res => {
+        alert(res.data.message);
+        if(res.data.status === 200){
+          navigate('/');
+        }
+      })
+      .catch(err => {
+          alert(err);
+          console.log(err);
+      });
+    }
   }
 
   return (

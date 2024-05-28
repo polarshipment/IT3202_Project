@@ -79,16 +79,25 @@ app.put("/", (req, res) => {
 
 
 // AUTHENTICATION
-app.post("/login", (req, res) => {
-    const sql = "SELECT * FROM user WHERE email = ? AND password = ?";
-    
-    db.query(sql, [req.body.email, req.body.pass], (err, data) => {
+app.post("/register", (req, res) => {
+
+    const checkUserSql = "SELECT * FROM users WHERE email = ?";
+    db.query(checkUserSql, [req.body.email], (err, data) => {
         if(err) return res.json("Error: ", err.sqlMessage);
         if(data.length > 0 ) {
-            return res.json("Login Successful.");
-        } else{
-            return res.json("No matching record.");
+            return res.json({ status: 400, message: "Email already exist." });
         }
+
+        const insertUserSql = "INSERT INTO users (`name`,`email`,`password`) VALUES (?)";
+        const values = [
+            req.body.name, 
+            req.body.email, 
+            req.body.pass
+        ]
+        db.query(insertUserSql, [values], (err, data) => {
+            if(err) return res.json("Error: ", err.sqlMessage);
+            return res.json({ status: 200, message: "Account created successfully." });
+        })
     })
 })
 
