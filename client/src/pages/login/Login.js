@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios'
+import axios from 'axios';
+import Validation from './LoginValidation';
 
 function Login() {
   const[formData, setFormData] = useState({
@@ -8,15 +9,15 @@ function Login() {
     pass: ''
   })
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.email]: [e.target.pass] }));
+    setFormData(prev => ({ ...prev, [e.target.name]: [e.target.value] }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:7000/login', {email, pass})
-    .then(res => console.log(res))
-    .catch(err => console.log(err));
+    setErrors(Validation(formData));
   }
 
   return (
@@ -30,22 +31,24 @@ function Login() {
             <div className="mb-6 w-2/4">
               <label htmlFor="email">Email</label>
               <input 
-                type="email" name="email"
+                type="email" name="email" 
                 className="mt-1 p-2 w-full border-2 border-gray-300" 
-                placeholder="Enter Email"
+                placeholder="Enter Email" required
                 onChange={handleChange}
               />
+              {errors.email && <span className="text-red-700 italic text-sm">{errors.email}</span>}
             </div>
             <div className="mb-10 w-2/4">
-              <label>Password</label>
+              <label htmlFor="pass">Password</label>
               <input 
                 type="password" name="pass"
                 className="mt-1 p-2 w-full border-2 border-gray-300" 
-                placeholder="Enter Password"
+                placeholder="Enter Password" required
                 onChange={handleChange}
               />
+              {errors.pass && <span className="text-red-700 italic text-sm">{errors.pass}</span>}
             </div>
-            <button className="bg-custom-skyblue text-white text-2xl px-16 py-[10px] rounded-xl">SUBMIT</button>
+            <button type="submit" className="bg-custom-skyblue text-white text-2xl px-16 py-[10px] rounded-xl">SUBMIT</button>
           </form>
 
           <p className="mt-2 mb-12">Don't have an account? <Link to='/register' className="text-custom-skyblue">Register here</Link></p>

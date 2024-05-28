@@ -59,6 +59,8 @@ app.delete("/products/:id", (req, res) => {
     })
 })
 
+
+// DASHBOARD
 app.put("/", (req, res) => {
     if (req.method === 'PUT') {
         const updateData = req.body;
