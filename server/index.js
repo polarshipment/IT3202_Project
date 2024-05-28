@@ -101,6 +101,21 @@ app.post("/register", (req, res) => {
     })
 })
 
+app.post("/login", (req, res) => {
+
+    const checkUserSql = "SELECT * FROM users WHERE email = ? AND password = ?";
+    db.query(checkUserSql, [req.body.email, req.body.pass], (err, data) => {
+        if(err) return res.json("Error: ", err.sqlMessage);
+        if(data.length > 0 ) {
+            return res.json({ status: 200, message: "Success" });
+        } else {
+            return res.json({ status: 400, message: "Invalid credentials." });
+        }
+    })
+})
+
+
+
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 })

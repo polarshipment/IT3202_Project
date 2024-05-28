@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Validation from './LoginValidation';
 
@@ -9,6 +9,7 @@ function Login() {
     pass: ''
   })
 
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -18,6 +19,17 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors(Validation(formData));
+    if(errors.email === "" && errors.pass === "") {
+      axios.post('http://localhost:7000/login', formData)
+      .then(res => {
+        if(res.data.status === 200){
+          navigate('/user');
+        } else {
+          alert(res.data.message);
+        }
+      })
+      .catch(err => console.log(err));
+    }
   }
 
   return (
