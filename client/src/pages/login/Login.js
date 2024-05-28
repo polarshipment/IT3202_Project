@@ -23,6 +23,7 @@ function Login() {
       axios.post('http://localhost:7000/login', formData)
       .then(res => {
         if(res.data.status === 200){
+          localStorage.setItem("token", res.data.accessToken);
           navigate('/user');
         } else {
           alert(res.data.message);

@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const db = require('./db/dbConfig.js');
 
 const app = express();
@@ -83,35 +85,72 @@ app.post("/register", (req, res) => {
 
     const checkUserSql = "SELECT * FROM users WHERE email = ?";
     db.query(checkUserSql, [req.body.email], (err, data) => {
-        if(err) return res.json("Error: ", err.sqlMessage);
+        if(err) return res.json("Error: ", err.message);
         if(data.length > 0 ) {
             return res.json({ status: 400, message: "Email already exist." });
         }
 
-        const insertUserSql = "INSERT INTO users (`name`,`email`,`password`) VALUES (?)";
-        const values = [
-            req.body.name, 
-            req.body.email, 
-            req.body.pass
-        ]
-        db.query(insertUserSql, [values], (err, data) => {
-            if(err) return res.json("Error: ", err.sqlMessage);
-            return res.json({ status: 200, message: "Account created successfully." });
+        const pass = req.body.pass.toString();
+        bcrypt.hash(pass, 10, (err, hash) => {
+            if (err) {
+                return res.json("Error hashing password", err.message);
+            }
+
+            const insertUserSql = "INSERT INTO users (`name`,`email`,`password`) VALUES (?)";
+            const values = [
+                req.body.name, 
+                req.body.email, 
+                hash
+            ]
+            db.query(insertUserSql, [values], (err, data) => {
+                if(err) return res.json("Error: ", err.message);
+                return res.json({ status: 200, message: "Account created successfully." });
+            })
         })
+        
     })
 })
 
 app.post("/login", (req, res) => {
 
-    const checkUserSql = "SELECT * FROM users WHERE email = ? AND password = ?";
-    db.query(checkUserSql, [req.body.email, req.body.pass], (err, data) => {
-        if(err) return res.json("Error: ", err.sqlMessage);
+    const sql = "SELECT * FROM users WHERE email = ?";
+    db.query(sql, [req.body.email], (err, data) => {
+        if(err) return res.json("Error: ", err.message);
+
         if(data.length > 0 ) {
-            return res.json({ status: 200, message: "Success" });
+            const pass = req.body.pass.toString();
+            bcrypt.compare(pass, data[0].password, (err, response) => {
+                if(err) return res.json("Error: ", err.message);
+                if(response) {
+                    const id = data[0].id;
+                    const accessToken = jwt.sign({id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+                    return res.json({ status: 200, message: "Success", accessToken, data});
+                }
+                return res.json({ status: 401, message: "Invalid credentials." });
+            })
         } else {
-            return res.json({ status: 400, message: "Invalid credentials." });
+            return res.json({ status: 401, message: "Invalid credentials." });
         }
     })
+})
+
+const verifyJwt = (req, res, next) => {
+    const token = req.headers["access-token"];
+    if(!token) {
+        return res.json("we need token");
+    } else {
+        jwt.verify(token, "jwtSecretKey", (err, decoded) => {
+            if(err) res.json("Not Authenticated");
+            else {
+                req.id = decoded.id;
+                next();
+            }
+        })
+    }
+}
+
+app.get('/checkAuth', verifyJwt, (req, res) => {
+    res.json("Authenticated");
 })
 
 
