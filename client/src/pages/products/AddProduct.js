@@ -15,7 +15,7 @@ function AddProduct() {
       .then(res => {
         console.log('Product Successfully Added:', res.data);
         alert('Product Added Successfully!');
-        navigate('/');
+        navigate('/user/products');
       }).catch(err =>{
         console.error('Error adding product:', err);
         alert('An error occurred. Please try again.');
@@ -23,7 +23,7 @@ function AddProduct() {
     }
 
     function handleCancel() {
-      navigate('/');
+      navigate('/user/products');
     }
 
     return (
