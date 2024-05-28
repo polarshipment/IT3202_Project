@@ -11,6 +11,7 @@ import Products from './pages/products/Products';
 import AddProduct from './pages/products/AddProduct';
 import UpdateProduct from './pages/products/UpdateProduct';
 import Dashboard from './pages/dashboard/Dashboard'
+import UserAuth from './util/userAuth';
 
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
         <Route path="register" element={<Register />} />
 
         {/* User Page Routes */}
-        <Route path="user" element={<Layout />}>
+        <Route path="user" element={<UserAuth><Layout /></UserAuth>}>
           <Route index element={<Dashboard />} />                           {/* localhost/user */}
           <Route path="products" element={<Products />} />                  {/* localhost/user/products */}
           <Route path="products/add" element={<AddProduct />} />            {/* localhost/user/products/add*/}
