@@ -36,6 +36,9 @@ function AddProduct() {
         navigate('/');
       })
       .catch(err => {
+        alert('Product Added Successfully!');
+        navigate('/user/products');
+      }).catch(err =>{
         console.error('Error adding product:', err);
         alert('An error occurred. Please try again.');
       });
@@ -44,6 +47,9 @@ function AddProduct() {
   function handleCancel() {
     navigate('/');
   }
+    function handleCancel() {
+      navigate('/user/products');
+    }
 
   return (
     <div className="h-full w-full flex justify-center items-center">

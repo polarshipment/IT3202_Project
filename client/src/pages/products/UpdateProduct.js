@@ -18,7 +18,7 @@ function UpdateProduct() {
       .then(res => {
         console.log('Product Successfully Updated:', res.data);
         alert('Product Updated Successfully!');
-        navigate('/');
+        navigate('/user/products');
       }).catch(err =>{
         console.error('Error Updating Product:', err);
         alert('An error occurred. Please try again.');
@@ -26,7 +26,7 @@ function UpdateProduct() {
     }
 
     function handleCancel() {
-      navigate('/');
+      navigate('/user/products');
     }
 
     return (
