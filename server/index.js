@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require('bcrypt');
 const db = require('./db/dbConfig.js');
 
 const app = express();
@@ -83,31 +84,47 @@ app.post("/register", (req, res) => {
 
     const checkUserSql = "SELECT * FROM users WHERE email = ?";
     db.query(checkUserSql, [req.body.email], (err, data) => {
-        if(err) return res.json("Error: ", err.sqlMessage);
+        if(err) return res.json("Error: ", err.message);
         if(data.length > 0 ) {
             return res.json({ status: 400, message: "Email already exist." });
         }
 
-        const insertUserSql = "INSERT INTO users (`name`,`email`,`password`) VALUES (?)";
-        const values = [
-            req.body.name, 
-            req.body.email, 
-            req.body.pass
-        ]
-        db.query(insertUserSql, [values], (err, data) => {
-            if(err) return res.json("Error: ", err.sqlMessage);
-            return res.json({ status: 200, message: "Account created successfully." });
+        const pass = req.body.pass.toString();
+        bcrypt.hash(pass, 10, (err, hash) => {
+            if (err) {
+                return res.json("Error hashing password", err.message);
+            }
+
+            const insertUserSql = "INSERT INTO users (`name`,`email`,`password`) VALUES (?)";
+            const values = [
+                req.body.name, 
+                req.body.email, 
+                hash
+            ]
+            db.query(insertUserSql, [values], (err, data) => {
+                if(err) return res.json("Error: ", err.message);
+                return res.json({ status: 200, message: "Account created successfully." });
+            })
         })
+        
     })
 })
 
 app.post("/login", (req, res) => {
 
-    const checkUserSql = "SELECT * FROM users WHERE email = ? AND password = ?";
-    db.query(checkUserSql, [req.body.email, req.body.pass], (err, data) => {
-        if(err) return res.json("Error: ", err.sqlMessage);
+    const sql = "SELECT * FROM users WHERE email = ?";
+    db.query(sql, [req.body.email], (err, data) => {
+        if(err) return res.json("Error: ", err.message);
+
         if(data.length > 0 ) {
-            return res.json({ status: 200, message: "Success" });
+            const pass = req.body.pass.toString();
+            bcrypt.compare(pass, data[0].password, (err, response) => {
+                if(err) return res.json("Error: ", err.message);
+                if(response) {
+                    return res.json({ status: 200, message: "Success" });
+                }
+                return res.json({ status: 400, message: "Invalid credentials." });
+            })
         } else {
             return res.json({ status: 400, message: "Invalid credentials." });
         }
