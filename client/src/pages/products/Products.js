@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import config from '../../util/config'
 
 function Products() {
 
+  const navigate = useNavigate();
   const [products, setProduct] = useState([])
 
   useEffect(() => {
@@ -15,8 +16,8 @@ function Products() {
 
   const handleDelete = async (id) => {  
     try {
-      await axios.delete(`${config.API}/products/`+id)
-      window.location.reload()  
+      await axios.delete(`${config.API}/products/`+id);
+      navigate("/user/products");
     } catch(err) {
       console.log(err);
     } 
