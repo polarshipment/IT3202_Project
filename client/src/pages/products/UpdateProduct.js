@@ -1,16 +1,25 @@
 import axios from 'axios';
-import React from 'react'
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 
 function UpdateProduct() {
+    const {id} = useParams();
+    const navigate = useNavigate()
+    const location = useLocation();
+    const { product } = location.state || {};
+
     const [product_name, setProductName] = useState('')
     const [stock, setStock] = useState('')
     const [price, setPrice] = useState('')
-    const {id} = useParams();
-    const navigate = useNavigate()
+
+    useEffect(() => {
+      if (product) {
+        setProductName(product.product_name);
+        setStock(product.stock);
+        setPrice(product.price);
+      }
+    }, [product]);
 
     function handleSubmit(event) {
       event.preventDefault();
@@ -36,22 +45,28 @@ function UpdateProduct() {
           <form onSubmit={handleSubmit}>
             <div className="mb-5">
               <label>Product Name:</label>
-              <input type="text" className="mt-1 p-2 w-full border-2 border-gray-300" 
-              onChange={ e => setProductName(e.target.value)}
-              required
+              <input 
+                type="text" value={product_name}
+                className="mt-1 p-2 w-full border-2 border-gray-300" 
+                onChange={ e => setProductName(e.target.value)}
+                required
               />
             </div>
             <div className="mb-5">
               <label className="">Stock Available:</label>
-              <input type="number" className="mt-1 p-2 w-full border-2 border-gray-300" 
-              onChange={e => setStock(Math.max(0, e.target.value))}
-              min="0"
-              required
+              <input 
+                type="number" value={stock}
+                className="mt-1 p-2 w-full border-2 border-gray-300" 
+                onChange={e => setStock(Math.max(0, e.target.value))}
+                min="0"
+                required
               />
             </div>
             <div className="mb-5">
               <label className="">Price:</label>
-              <input type="number" step="0.01" className="mt-1 p-2 w-full border-2 border-gray-300" 
+              <input 
+                type="number" value={price} step="0.01" 
+                className="mt-1 p-2 w-full border-2 border-gray-300" 
                 onChange={e => setPrice(Math.max(0, parseFloat(e.target.value)))} 
                 min="0" 
                 required

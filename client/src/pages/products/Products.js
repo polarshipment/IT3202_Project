@@ -45,7 +45,7 @@ function Products() {
                     <td className="text-center">{data.stock}</td>
                     <td className="text-center">{data.price}</td>
                     <td className="text-center">
-                      <Link to={`update/${data.id}`} className="bg-custom-green text-white px-5 py-[10px] me-3 rounded-md">Update</Link>
+                      <Link to={`update/${data.id}`} state={{ product: data }}  className="bg-custom-green text-white px-5 py-[10px] me-3 rounded-md">Update</Link>
                       <button className="bg-custom-red text-white px-5 py-[7.6px] rounded-md" onClick={ e => handleDelete(data.id)}>Delete</button>
                     </td>
                   </tr>
