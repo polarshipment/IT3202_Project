@@ -1,3 +1,3 @@
 export default{
-    API:"http://localhost:7000"
+    API:"https://cms-sarisari.onrender.com"
 }
