@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Validation from './LoginValidation';
 import axiosInstance from '../../util/axiosInstance';
+import config from '../../util/config';
 
 function Login() {
   const[formData, setFormData] = useState({
@@ -20,7 +21,7 @@ function Login() {
     e.preventDefault();
     setErrors(Validation(formData));
     if(errors.email === "" && errors.pass === "") {
-      axiosInstance.post('http://localhost:7000/login', formData)
+      axiosInstance.post(`${config.API}/login`, formData)
       .then(res => {
         if(res.data.status === 200){
           localStorage.setItem("accessToken", res.data.accessToken);

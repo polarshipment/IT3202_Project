@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import config from '../../util/config'
 
 function Products() {
 
   const [products, setProduct] = useState([])
 
   useEffect(() => {
-      axios.get('http://localhost:7000/')
+      axios.get(`${config.API}`)
       .then(res => setProduct(res.data))
       .catch(err => console.log(err));
   })
 
   const handleDelete = async (id) => {  
     try {
-      await axios.delete('http://localhost:7000/products/'+id)
+      await axios.delete(`${config.API}/products/`+id)
       window.location.reload()  
     } catch(err) {
       console.log(err);
