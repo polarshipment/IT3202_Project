@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import config from '../../util/config';
 
 function Dashboard() {
   const userDetails = localStorage.getItem("user");
@@ -12,7 +13,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:7000');
+        const response = await axios.get(`${config.API}`);
         console.log('Fetched products:', response.data);
         setProducts(response.data);
       } catch (error) {
@@ -67,7 +68,7 @@ function Dashboard() {
     }
 
     try {
-      const updateResponse = await axios.put('http://localhost:7000', {
+      const updateResponse = await axios.put(`${config.API}`, {
         id: selectedProductId,
         stock: updatedQuantity,
       });

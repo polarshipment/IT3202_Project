@@ -2,6 +2,7 @@ import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import config from '../../util/config';
 
 function AddProduct() {
     const [product_name, setProductName] = useState('')
@@ -11,7 +12,7 @@ function AddProduct() {
 
     function handleSubmit(event) {
       event.preventDefault();
-      axios.post('http://localhost:7000/add', {product_name, stock, price}) 
+      axios.post(`${config.API}/add`, {product_name, stock, price}) 
       .then(res => {
         console.log('Product Successfully Added:', res.data);
         alert('Product Added Successfully!');

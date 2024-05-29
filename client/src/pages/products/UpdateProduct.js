@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import config from '../../util/config';
 
 
 function UpdateProduct() {
@@ -23,7 +24,7 @@ function UpdateProduct() {
 
     function handleSubmit(event) {
       event.preventDefault();
-      axios.put('http://localhost:7000/update/'+ id, {product_name, stock, price}) 
+      axios.put(`${config.API}/update/`+ id, {product_name, stock, price}) 
       .then(res => {
         console.log('Product Successfully Updated:', res.data);
         alert('Product Updated Successfully!');

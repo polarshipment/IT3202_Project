@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Validation from './RegisterValidation';
+import config from '../../util/config';
 
 function Register() {
 
@@ -22,7 +23,7 @@ function Register() {
     e.preventDefault();
     setErrors(Validation(formData));
     if(errors.name === "" && errors.email === "" && errors.pass === "") {
-      axios.post('http://localhost:7000/register', formData)
+      axios.post(`${config.API}/register`, formData)
       .then(res => {
         alert(res.data.message);
         if(res.data.status === 200){
