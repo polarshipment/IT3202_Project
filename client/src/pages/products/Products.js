@@ -1,25 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import config from '../../util/config'
 
 function Products() {
 
+  const navigate = useNavigate();
   const [products, setProduct] = useState([])
 
   useEffect(() => {
-      axios.get(`${config.API}`)
+      axios.get(`${config.API}/products`)
       .then(res => setProduct(res.data))
-      .catch(err => console.log(err));
+      .catch(err => console.log(err.response.data.message, err));
   })
 
   const handleDelete = async (id) => {  
-    try {
-      await axios.delete(`${config.API}/products/`+id)
-      window.location.reload()  
-    } catch(err) {
-      console.log(err);
-    } 
+    const isConfirmed = window.confirm("Confirm delete of Product ID: "+id+". Press OK to continue.");
+    
+    if(isConfirmed) {
+      try {
+        await axios.delete(`${config.API}/delete/`+id)
+        navigate("/user/products");
+      } catch(err) {
+        console.log(err.response.data.message, err);
+        alert('An error occurred. Please try again.');
+      } 
+    }
   }
 
   return (
@@ -38,7 +44,10 @@ function Products() {
               </tr>
             </thead>
             <tbody>
-              {
+            {
+              products.length === 0 ? (
+                <tr><td colSpan="5" className="text-center italic py-10">No products listed yet.</td></tr>
+              ) : (
                 products.map((data, i) => (
                   <tr key={i}>
                     <td className="text-center">{data.id}</td>
@@ -51,7 +60,8 @@ function Products() {
                     </td>
                   </tr>
                 ))
-              }
+              )
+            }
             </tbody>
           </table>
         </div>

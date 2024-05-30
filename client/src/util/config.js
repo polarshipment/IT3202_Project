@@ -1,3 +1,5 @@
-export default{
-    API:"http://localhost:7000"
-}
+const config = {
+    API: "http://localhost:7000"
+};
+
+export default config;
