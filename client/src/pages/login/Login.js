@@ -23,15 +23,15 @@ function Login() {
     if(errors.email === "" && errors.pass === "") {
       axiosInstance.post(`${config.API}/login`, formData)
       .then(res => {
-        if(res.data.status === 200){
           localStorage.setItem("accessToken", res.data.accessToken);
           localStorage.setItem("user", JSON.stringify(res.data.user));
           navigate('/user');
-        } else {
-          alert(res.data.message);
-        }
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err.response.data.message, err);
+        if(err.response.status === 401) alert(err.response.data.message);
+        else alert('An error occurred. Please try again.');
+    });
     }
   }
 

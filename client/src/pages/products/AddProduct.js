@@ -14,11 +14,10 @@ function AddProduct() {
       event.preventDefault();
       axios.post(`${config.API}/add`, {product_name, stock, price}) 
       .then(res => {
-        console.log('Product Successfully Added:', res.data);
-        alert('Product Added Successfully!');
+        alert(res.data.message);
         navigate('/user/products');
-      }).catch(err =>{
-        console.error('Error adding product:', err);
+      }).catch(err => {
+        console.log(err.response.data.message, err);
         alert('An error occurred. Please try again.');
       }); 
     }
