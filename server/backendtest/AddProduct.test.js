@@ -1,53 +1,32 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import AddProduct from '../../client/src/pages/products/AddProduct';
-import axios from 'axios'; 
+const request = require('supertest');
+const app = require('../index'); 
 
-jest.mock('axios'); 
+jest.mock('mysql', () => ({
+    createConnection: jest.fn(() => ({
+      query: jest.fn((sql, values, callback) => {
+        if (sql.startsWith('INSERT INTO products')) {
+          callback(null, { insertId: 1 });
+        } else {
+          callback(new Error('Database error'), null);
+        }
+      }),
+    })),
+}));
 
-describe('AddProduct', () => {
-  test('submits the form with valid data', async () => {
-    const mockNavigate = jest.fn(); 
-
-    render(<AddProduct navigate={mockNavigate} />);
-
-    const productNameInput = screen.getByLabelText(/Product Name:/i);
-    const stockInput = screen.getByLabelText(/Stock Available:/i);
-    const priceInput = screen.getByLabelText(/Price:/i);
-    const submitButton = screen.getByText(/CREATE/i);
-
-    fireEvent.change(productNameInput, { target: { value: 'New Product' } });
-    fireEvent.change(stockInput, { target: { value: '10' } });
-    fireEvent.change(priceInput, { target: { value: '19.99' } });
-
-    await fireEvent.submit(submitButton);
-
-    expect(mockNavigate).toHaveBeenCalledWith('/user/products'); 
-
-    axios.post.mockResolvedValueOnce({ data: { message: 'Product added successfully!' } });
-
-    expect(axios.post).toHaveBeenCalledWith(`${config.API}/add`, {
-      product_name: 'New Product',
-      stock: 10, 
-      price: 19.99, 
+describe('POST /add', () => {
+    test('should add a product successfully', async () => {
+        const newFood = {
+            product_name: 'Pizza',
+            stock: 10,
+            price: 90.99,
+        };
+    
+        const response = await request(app)
+            .post('/addFood')
+            .send(newFood);
+    
+        expect(response.statusCode).toBe(201);
+        expect(response.body.message).toBe('Product Added Successfully!');
+        expect(response.body.addedFoodId).toBe(1);
     });
-  });
-
-  test('shows error message on failed submission', async () => {
-    const mockNavigate = jest.fn(); 
-
-    render(<AddProduct navigate={mockNavigate} />);
-
-    fireEvent.change(screen.getByLabelText(/Product Name:/i), { target: { value: '' } });
-    fireEvent.change(screen.getByLabelText(/Stock Available:/i), { target: { value: '-5' } });
-    fireEvent.change(screen.getByLabelText(/Price:/i), { target: { value: 'abc' } });
-
-    await fireEvent.submit(screen.getByText(/CREATE/i));
-
-
-    expect(mockNavigate).not.toHaveBeenCalled();
-
-    axios.post.mockRejectedValueOnce(new Error('Internal server error'));
-
-    expect(await screen.findByText(/An error occurred/i)).toBeInTheDocument();
-  });
 });

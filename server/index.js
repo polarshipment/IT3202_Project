@@ -11,8 +11,6 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
-const PORT = process.env.PORT || 7000;
-
 app.get('/', (req,res)=>{
     res.json({
         status: "successful",
@@ -30,7 +28,7 @@ app.get("/products", (req, res) => {
     const sql = "SELECT * FROM products";
     db.query(sql, (err, data) => {
         if(err) return res.status(500).json({ message:"Error retrieving the products. ", err });
-        return res.status(201).json(data);
+        return res.status(200).json(data);
     })
 })
 
@@ -180,8 +178,4 @@ app.post("/logout", (req, res) => {
     res.status(204).send();
 });
 
-
-
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-})
+module.exports = app;
