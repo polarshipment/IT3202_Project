@@ -12,14 +12,14 @@ describe('POST /register', () => {
     test('should create an account successfully and return 201 status', async () => {
         db.query.mockImplementation((sql, values, callback) => {
             if (sql.includes('SELECT')) {
-                callback(null, []); // No user found
+                callback(null, []); 
             } else if (sql.includes('INSERT')) {
-                callback(null, { affectedRows: 1 }); // Insert successful
+                callback(null, { affectedRows: 1 }); 
             }
         });
 
         bcrypt.hash.mockImplementation((password, saltRounds, callback) => {
-            callback(null, 'hashedpassword'); // Hash successful
+            callback(null, 'hashedpassword'); 
         });
 
         const res = await request(app)
@@ -37,7 +37,7 @@ describe('POST /register', () => {
     test('should return 409 error if the email already exists', async () => {
         db.query.mockImplementation((sql, values, callback) => {
             if (sql.includes('SELECT')) {
-                callback(null, [{ id: 1, email: 'test@example.com' }]); // User found
+                callback(null, [{ id: 1, email: 'test@example.com' }]); 
             }
         });
 
@@ -75,7 +75,7 @@ describe('POST /register', () => {
     test('should return 500 error if there is an error hashing the password', async () => {
         db.query.mockImplementation((sql, values, callback) => {
             if (sql.includes('SELECT')) {
-                callback(null, []); // No user found
+                callback(null, []); 
             }
         });
 
@@ -98,14 +98,14 @@ describe('POST /register', () => {
     test('should return 500 error if there is a database error during user account creation', async () => {
         db.query.mockImplementation((sql, values, callback) => {
             if (sql.includes('SELECT')) {
-                callback(null, []); // No user found
+                callback(null, []); 
             } else if (sql.includes('INSERT')) {
                 callback(new Error('Database error'), null);
             }
         });
 
         bcrypt.hash.mockImplementation((password, saltRounds, callback) => {
-            callback(null, 'hashedpassword'); // Hash successful
+            callback(null, 'hashedpassword'); 
         });
 
         const res = await request(app)
