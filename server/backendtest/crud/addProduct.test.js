@@ -1,8 +1,8 @@
 const request = require('supertest');
-const {app} = require('../index'); 
-const db = require('../db/dbConfig');
+const {app} = require('../../index'); 
+const db = require('../../db/dbConfig');
 
-jest.mock('../db/dbConfig');
+jest.mock('../../db/dbConfig');
 
 
 describe('POST /add', () => {
