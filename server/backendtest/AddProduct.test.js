@@ -1,32 +1,43 @@
 const request = require('supertest');
 const app = require('../index'); 
+const db = require('../db/dbConfig');
 
-jest.mock('mysql', () => ({
-    createConnection: jest.fn(() => ({
-      query: jest.fn((sql, values, callback) => {
-        if (sql.startsWith('INSERT INTO products')) {
-          callback(null, { insertId: 1 });
-        } else {
-          callback(new Error('Database error'), null);
-        }
-      }),
-    })),
-}));
+jest.mock('../db/dbConfig');
+
 
 describe('POST /add', () => {
-    test('should add a product successfully', async () => {
-        const newFood = {
-            product_name: 'Pizza',
-            stock: 10,
-            price: 90.99,
-        };
-    
-        const response = await request(app)
-            .post('/addFood')
-            .send(newFood);
-    
-        expect(response.statusCode).toBe(201);
-        expect(response.body.message).toBe('Product Added Successfully!');
-        expect(response.body.addedFoodId).toBe(1);
+    test('should add a product successfully and return 201 status', async () => {
+        db.query.mockImplementation((sql, values, callback) => {
+            callback(null, { affectedRows: 1 });
+        });
+
+        const res = await request(app)
+            .post('/add')
+            .send({
+                product_name: 'Test Product',
+                stock: 10,
+                price: 100
+            });
+
+        expect(res.statusCode).toEqual(201);
+        expect(res.body).toHaveProperty('message', 'Product Added Successfully!');
     });
+
+    test('should return 500 status if the product cannot be added', async () => {
+        db.query.mockImplementation((sql, values, callback) => {
+        callback(new Error('Database error'), null);
+        });
+
+        const res = await request(app)
+        .post('/add')
+        .send({
+            product_name: 'Test Product',
+            stock: 10,
+            price: 100
+        });
+
+        expect(res.statusCode).toEqual(500);
+        expect(res.body).toHaveProperty('message', 'Error creating the product. ');
+    });
+
 });
