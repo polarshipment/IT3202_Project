@@ -1,53 +1,43 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import AddProduct from '../../client/src/pages/products/AddProduct';
-import axios from 'axios'; 
+const request = require('supertest');
+const app = require('../index'); 
+const db = require('../db/dbConfig');
 
-jest.mock('axios'); 
+jest.mock('../db/dbConfig');
 
-describe('AddProduct', () => {
-  test('submits the form with valid data', async () => {
-    const mockNavigate = jest.fn(); 
 
-    render(<AddProduct navigate={mockNavigate} />);
+describe('POST /add', () => {
+    test('should add a product successfully and return 201 status', async () => {
+        db.query.mockImplementation((sql, values, callback) => {
+            callback(null, { affectedRows: 1 });
+        });
 
-    const productNameInput = screen.getByLabelText(/Product Name:/i);
-    const stockInput = screen.getByLabelText(/Stock Available:/i);
-    const priceInput = screen.getByLabelText(/Price:/i);
-    const submitButton = screen.getByText(/CREATE/i);
+        const res = await request(app)
+            .post('/add')
+            .send({
+                product_name: 'Test Product',
+                stock: 10,
+                price: 100
+            });
 
-    fireEvent.change(productNameInput, { target: { value: 'New Product' } });
-    fireEvent.change(stockInput, { target: { value: '10' } });
-    fireEvent.change(priceInput, { target: { value: '19.99' } });
-
-    await fireEvent.submit(submitButton);
-
-    expect(mockNavigate).toHaveBeenCalledWith('/user/products'); 
-
-    axios.post.mockResolvedValueOnce({ data: { message: 'Product added successfully!' } });
-
-    expect(axios.post).toHaveBeenCalledWith(`${config.API}/add`, {
-      product_name: 'New Product',
-      stock: 10, 
-      price: 19.99, 
+        expect(res.statusCode).toEqual(201);
+        expect(res.body).toHaveProperty('message', 'Product Added Successfully!');
     });
-  });
 
-  test('shows error message on failed submission', async () => {
-    const mockNavigate = jest.fn(); 
+    test('should return 500 status if the product cannot be added', async () => {
+        db.query.mockImplementation((sql, values, callback) => {
+        callback(new Error('Database error'), null);
+        });
 
-    render(<AddProduct navigate={mockNavigate} />);
+        const res = await request(app)
+        .post('/add')
+        .send({
+            product_name: 'Test Product',
+            stock: 10,
+            price: 100
+        });
 
-    fireEvent.change(screen.getByLabelText(/Product Name:/i), { target: { value: '' } });
-    fireEvent.change(screen.getByLabelText(/Stock Available:/i), { target: { value: '-5' } });
-    fireEvent.change(screen.getByLabelText(/Price:/i), { target: { value: 'abc' } });
+        expect(res.statusCode).toEqual(500);
+        expect(res.body).toHaveProperty('message', 'Error creating the product. ');
+    });
 
-    await fireEvent.submit(screen.getByText(/CREATE/i));
-
-
-    expect(mockNavigate).not.toHaveBeenCalled();
-
-    axios.post.mockRejectedValueOnce(new Error('Internal server error'));
-
-    expect(await screen.findByText(/An error occurred/i)).toBeInTheDocument();
-  });
 });
