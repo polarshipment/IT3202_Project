@@ -1,8 +1,8 @@
 const request = require('supertest');
-const {app} = require('../index'); 
-const db = require('../db/dbConfig');
+const {app} = require('../../index'); 
+const db = require('../../db/dbConfig');
 
-jest.mock('../db/dbConfig');
+jest.mock('../../db/dbConfig');
 
 app.put("/update/:id", (req, res) => {
     const sql = "UPDATE products SET product_name = ?, stock = ?, price = ? WHERE id = ?";

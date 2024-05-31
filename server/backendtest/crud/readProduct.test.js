@@ -1,8 +1,8 @@
 const request = require('supertest');
-const {app} = require('../index'); 
-const db = require('../db/dbConfig');
+const {app} = require('../../index'); 
+const db = require('../../db/dbConfig');
 
-jest.mock('../db/dbConfig');
+jest.mock('../../db/dbConfig');
 
 app.get("/products", (req, res) => {
         const sql = "SELECT * FROM products";
