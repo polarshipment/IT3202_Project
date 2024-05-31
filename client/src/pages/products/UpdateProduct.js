@@ -26,11 +26,10 @@ function UpdateProduct() {
       event.preventDefault();
       axios.put(`${config.API}/update/`+ id, {product_name, stock, price}) 
       .then(res => {
-        console.log('Product Successfully Updated:', res.data);
-        alert('Product Updated Successfully!');
+        alert(res.data.message);
         navigate('/user/products');
       }).catch(err =>{
-        console.error('Error Updating Product:', err);
+        console.log(err.response.data.message, err);
         alert('An error occurred. Please try again.');
       }); 
     }

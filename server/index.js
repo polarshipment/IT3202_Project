@@ -11,18 +11,28 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
-const PORT = process.env.PORT || 7000;
+app.get('/', (req,res)=>{
+    res.json({
+        status: "successful",
+        is_connected: true,
+        message: "Hello World!",
+        data:[1,2,3]
+    });
+});
 
-
-// CRUD
-app.get("/", (req, res) => {
+////////////////////////////////////////////////////////////////////////////////////
+///// CRUD /////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+// Read Products
+app.get("/products", (req, res) => {
     const sql = "SELECT * FROM products";
     db.query(sql, (err, data) => {
-        if(err) return res.json("Error");
-        return res.json(data);
+        if(err) return res.status(500).json({ message:"Error retrieving the products. ", err });
+        return res.status(200).json(data);
     })
 })
 
+// Add Product
 app.post("/add", (req, res) => {
     const sql = "INSERT INTO products (`product_name`,`stock`,`price`) VALUES (?)";
     const values = [
@@ -31,12 +41,12 @@ app.post("/add", (req, res) => {
         req.body.price
     ]
     db.query(sql, [values], (err, data) => {
-        if(err) return res.json("Error");
-        return res.json(data);
+        if(err) return res.status(500).json({ message:"Error creating the product. ", err });
+        return res.status(201).json({ message: "Product Added Successfully!"});
     })
 })
 
-
+// Update Product
 app.put("/update/:id", (req, res) => {
     const sql = "UPDATE products SET product_name = ?, stock = ?, price = ? WHERE id = ?";
     const values = [
@@ -47,23 +57,29 @@ app.put("/update/:id", (req, res) => {
     const id = req.params.id;
 
     db.query(sql, [...values, id], (err, data) => {
-        if(err) return res.json("Error");
-        return res.json(data);
+        if(err) return res.status(500).json({ message:"Error updating the product. ", err });
+        if(data.affectedRows === 0) return res.status(404).json({ message: "Product not found."});
+        return res.status(200).json({ message: "Product Updated Successfully!"});
     })
 })
 
-app.delete("/products/:id", (req, res) => {
+// Delete Product
+app.delete("/delete/:id", (req, res) => {
     const sql = "DELETE FROM products WHERE id = ?";
     const id = req.params.id;
 
     db.query(sql, [id], (err, data) => {
-        if(err) return res.json("Error");
-        return res.json(data);
+        if(err) return res.status(500).json({ message:"Error deleting the product. ", err });
+        if(data.affectedRows === 0) return res.status(404).json({ message: "Product not found."});
+        return res.status(200).json({ message: "Product Deleted Successfully!"});
     })
 })
 
 
-// DASHBOARD
+////////////////////////////////////////////////////////////////////////////////////
+///// DASHBOARD ////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+// Order Processing
 app.put("/", (req, res) => {
     if (req.method === 'PUT') {
         const updateData = req.body;
@@ -75,27 +91,26 @@ app.put("/", (req, res) => {
         const values = [updateData.stock, updateData.id];
 
         db.query(sql, values, (err, data) => {
-            return res.json({ message: "Product stock updated successfully" });
+            return res.status(200).json({ message: "Product stock updated successfully" });
         });
     }
 })
 
 
-// AUTHENTICATION
+////////////////////////////////////////////////////////////////////////////////////
+///// AUTHENTICATION ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+// Register
 app.post("/register", (req, res) => {
 
     const checkUserSql = "SELECT * FROM users WHERE email = ?";
     db.query(checkUserSql, [req.body.email], (err, data) => {
-        if(err) return res.json("Error: ", err.message);
-        if(data.length > 0 ) {
-            return res.json({ status: 400, message: "Email already exist." });
-        }
+        if(err) return res.status(500).json({ message:"Database error. ", err });
+        if(data.length > 0 ) return res.status(409).json({ message: "Email already exists." });
 
         const pass = req.body.pass.toString();
         bcrypt.hash(pass, 10, (err, hash) => {
-            if (err) {
-                return res.json("Error hashing password", err.message);
-            }
+            if (err) return res.status(500).json({ message:"Error hashing password. ", err });
 
             const insertUserSql = "INSERT INTO users (`name`,`email`,`password`) VALUES (?)";
             const values = [
@@ -104,13 +119,13 @@ app.post("/register", (req, res) => {
                 hash
             ]
             db.query(insertUserSql, [values], (err, data) => {
-                if(err) return res.json("Error: ", err.message);
-                return res.json({ status: 200, message: "Account created successfully." });
+                if(err) return res.status(500).json({ message:"Database error. ", err });
+                return res.status(201).json({ message: "Account created successfully."});
             })
         })
-        
     })
 })
+
 
 const generateTokens = (id) => {
     const accessToken = jwt.sign({id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
@@ -118,26 +133,27 @@ const generateTokens = (id) => {
     return { accessToken, refreshToken };
 };
 
+// Login
 app.post("/login", (req, res) => {
 
     const sql = "SELECT * FROM users WHERE email = ?";
     db.query(sql, [req.body.email], (err, data) => {
-        if(err) return res.json("Error: ", err.message);
+        if(err) return res.status(500).json({ message:"Database error. ", err });
 
         if(data.length > 0 ) {
             const pass = req.body.pass.toString();
             bcrypt.compare(pass, data[0].password, (err, response) => {
-                if(err) return res.json("Error: ", err.message);
+                if(err) return res.status(500).json({ message:"Error hashing password. ", err });
                 if(response) {
                     const id = data[0].id;
                     const { accessToken, refreshToken } = generateTokens(id);
                     res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Strict' });
-                    return res.json({ status: 200, message: "Success", accessToken, user: { id: data[0].id, name: data[0].name, email: data[0].email }});
+                    return res.status(200).json({ message: "Success", accessToken, user: { id: data[0].id, name: data[0].name, email: data[0].email }});
                 }
-                return res.json({ status: 401, message: "Invalid credentials." });
+                return res.status(401).json({ message: "Invalid credentials." });
             })
         } else {
-            return res.json({ status: 401, message: "Invalid credentials." });
+            return res.status(401).json({ message: "Invalid credentials." });
         }
     })
 })
@@ -156,13 +172,10 @@ app.post("/refreshToken", (req, res) => {
     }
 })
 
+// Logout
 app.post("/logout", (req, res) => {
     res.cookie('refreshToken', '', { httpOnly: true, maxAge: 0, sameSite: 'Strict' });
     res.status(204).send();
 });
 
-
-
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-})
+module.exports = {app, generateTokens};

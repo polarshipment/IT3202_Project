@@ -13,7 +13,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${config.API}`);
+        const response = await axios.get(`${config.API}/products`);
         console.log('Fetched products:', response.data);
         setProducts(response.data);
       } catch (error) {
@@ -72,7 +72,7 @@ function Dashboard() {
         id: selectedProductId,
         stock: updatedQuantity,
       });
-      console.log('Product stock updated:', updateResponse.data);
+      console.log(updateResponse.data.message);
       alert('Product stock updated!');
 
       setProducts(products.map((p) => (p.id === selectedProductId ? { ...p, stock: updatedQuantity } : p)));

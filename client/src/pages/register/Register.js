@@ -26,13 +26,12 @@ function Register() {
       axios.post(`${config.API}/register`, formData)
       .then(res => {
         alert(res.data.message);
-        if(res.data.status === 200){
-          navigate('/');
-        }
+        navigate('/');
       })
       .catch(err => {
-          alert(err);
-          console.log(err);
+          console.log(err.response.data.message, err);
+          if(err.response.status === 409) alert(err.response.data.message);
+          else alert('An error occurred. Please try again.');
       });
     }
   }
