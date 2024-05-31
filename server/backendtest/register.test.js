@@ -1,6 +1,6 @@
 const request = require('supertest');
 const bcrypt = require('bcrypt');
-const app = require('../index'); 
+const {app} = require('../index'); 
 const db = require('../db/dbConfig');
 
 jest.mock('../db/dbConfig');
