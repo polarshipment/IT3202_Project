@@ -106,7 +106,7 @@ app.post("/register", (req, res) => {
     const checkUserSql = "SELECT * FROM users WHERE email = ?";
     db.query(checkUserSql, [req.body.email], (err, data) => {
         if(err) return res.status(500).json({ message:"Database error. ", err });
-        if(data.length > 0 ) return res.status(409).json({ message: "Email already exist." });
+        if(data.length > 0 ) return res.status(409).json({ message: "Email already exists." });
 
         const pass = req.body.pass.toString();
         bcrypt.hash(pass, 10, (err, hash) => {
@@ -120,7 +120,7 @@ app.post("/register", (req, res) => {
             ]
             db.query(insertUserSql, [values], (err, data) => {
                 if(err) return res.status(500).json({ message:"Database error. ", err });
-                return res.status(200).json({ message: "Account created successfully."});
+                return res.status(201).json({ message: "Account created successfully."});
             })
         })
     })
@@ -178,4 +178,4 @@ app.post("/logout", (req, res) => {
     res.status(204).send();
 });
 
-module.exports = app;
+module.exports = {app, generateTokens};
