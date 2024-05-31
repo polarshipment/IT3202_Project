@@ -1,10 +1,10 @@
 const request = require('supertest');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { app, generateTokens } = require('../index'); 
-const db = require('../db/dbConfig');
+const { app, generateTokens } = require('../../index'); 
+const db = require('../../db/dbConfig');
 
-jest.mock('../db/dbConfig');
+jest.mock('../../db/dbConfig');
 jest.mock('bcrypt');
 jest.mock('jsonwebtoken', () => ({
     sign: jest.fn(),

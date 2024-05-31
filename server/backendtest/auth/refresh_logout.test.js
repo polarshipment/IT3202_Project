@@ -1,6 +1,6 @@
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
-const { app, generateTokens } = require('../index');
+const { app, generateTokens } = require('../../index');
 
 jest.mock('jsonwebtoken');
 
