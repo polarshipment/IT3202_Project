@@ -1,5 +1,5 @@
 const config = {
-    API: "http://localhost:7000"
+    API: "https://cms-sarisari.onrender.com"
 };
 
 export default config;
